@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!--Here we are designing the forms fields lyk email,password,remember me to actually interact with the user-->
+  <div class="content-section">
+    <form method="POST" action="">
+      <!--hidden.tag adds the csrf token used for enhancing the security of the form as used in FlaskForm method of class flask_wtf-->
+      {{form.hidden_tag()}}
+      <fieldset class='form-group'>
+        <!--border-btm-mb4 adds the border at bottom with margin of 4px-->
+        <legend class="join border-btm-mb4">Login</legend>
+        <div class="form-group">
+        <!--the methods we are accessing are the same as defined in the forms.py loginform lyk-email,password,remeber me-->
+          {{form.username.label(class='form-control-label')}}
+          {% if form.username.errors %}
+            {{form.username(class='form-control form-control-lg is-invalid')}}
+            <div class="inavlid-feedback">
+              {% for error in form.username.errors%}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{form.username(class='form-control form-control-lg')}}
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          {{form.password.label(class='form-control-label')}}
+          {% if form.password.errors %}
+            {{form.password(class='form-control form-control-lg is-invalid')}}
+            <div class="inavlid-feedback">
+              {% for error in form.password.errors%}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{form.password(class='form-control form-control-lg')}}
+          {% endif %}
+        </div>
+      </fieldset>
+      <div class="form-group">
+        {{form.submit(class="btn btn-outline-info")}}
+      </div>
+      <small>
+        <a class="Forgot" href="{{url_for('auth.forgot')}}">Forgot Password?</a>
+      </small>
+    </form>
+  </div>
+  <div class="footer-Signup">
+    <small class="need-acnt"> Need An Account? <a class="signup-pglink" href="{{url_for('auth.register')}}">Sign Up</a></small>
+  </div>
+{% endblock %}

@@ -1,0 +1,85 @@
+body {
+  background: #0a192f;
+  color: #333333;
+  margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+.logo{
+  font-size: 24px;
+  font-weight: bold;
+  color: #64ffda;
+}
+
+.bg-steel {
+  background-color: #112240;
+}
+
+.site-header .navbar-nav .nav-link {
+  color: #64ffda;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+
+.content-section {
+  background: #0f2c49;
+  padding: 10px 20px;
+  border: 1px solid #64ffda;
+  border-radius: 3px;
+  margin-left: 300px;
+  width: 75%;
+  margin-bottom: 20px;
+}
+.form-control-label{
+  color: #e6f1ff;
+}
+
+.Login{
+  margin-left: 5px;
+  color: #e6f1ff;
+}
+.Login-link:hover{
+  color: #64ffda;
+  text-decoration: none;
+}
+
+.join{
+  color: #e6f1ff;
+}
+
+.Forgot{
+  color: #e6f1ff;
+}
+.Forgot:hover{
+  color: #64ffda;
+  text-decoration: none;
+}
+
+.footer-Signup{
+  margin-top: 25px;
+  margin-left: 300px;
+  padding-left: 25%;
+  width: 75%;
+  border-top: #e6f1ff;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+.footer-Signup .need-acnt{
+  color: #e6f1ff;
+}
+.footer-Signup .signup-pglink{
+  margin-left: 5px;
+}
+.footer-Signup .signup-pglink:hover{
+  text-decoration: none;
+  color: #64ffda;
+}

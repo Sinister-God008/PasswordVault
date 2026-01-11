@@ -1,0 +1,19 @@
+Features To Be Added
+----------------------------------------------------------------------------------------------------
+#1 Secure Vault
+-Users can add, edit, delete, and view passwords for different websites.
+-Store fields like: website name, URL, username, password (encrypted), notes.
+-AES encryption using cryptography or Fernet.
+
+#2 Dashboard with JS Frontend
+Use JavaScript to display:
+Recent password additions/updates
+Password strength indicators
+Search functionality with filters
+
+#3 🌙 UI/UX Features
+Dark mode toggle with JavaScript
+Smooth transitions (CSS/JS)
+Responsive mobile-friendly design (Flexbox/Grid)
+
+#4 Password Generator Tool (JS)

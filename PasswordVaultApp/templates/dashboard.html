@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Vault Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- For icons -->
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-left">
+      <h2>🔐Password Vault</h2>
+    </div>
+    <div class="header-right">
+      <a href="{{url_for('dashboard.account')}}" class="macnt"><span style="font-size: 22px;">👤</span></a>
+      <a href="{{ url_for('auth.logout') }}">Sign Out</a>
+    </div>
+  </header>
+
+  <!-- Folder Section -->
+<section class="folder-bar-wrapper">
+  <div class="folder-background-tile">
+    <div class="folder-bar">
+      {% for folder in folders %}
+        <div class="folder-item">
+          <!--REASON WHY I REPLACED FORM WITH A TAG?
+          I’m doing a GET request, so I’ll build a query string from the form data.But I have no 
+          inputs to include,so the query string is empty. Therefore I’ll just navigate to 
+          /dashbd.”Result: folder_id = None in Flask.-->
+          <a href="{{ url_for('dashboard.db_home', folder_id=folder.id) }}" style="text-decoration: none;">
+            <button type="submit" class="folder-btn {% if folder.id == current_folder.id %}active{% endif %}">
+              <i class="fas fa-folder"></i>
+              <span class="folder-name">{{ folder.name }}</span>
+            </button>
+          </a>
+          <form method="POST" action="{{ url_for('dashboard.delete_folder', folder_id=folder.id) }}">
+            <button class="delete-folder-btn" title="Delete Folder">⛔</button>
+          </form>
+        </div>
+      {% endfor %}
+
+      <!-- Add Folder -->
+      <div class="folder-item">
+        <button class="folder-btn add" onclick="openFolderModal()">
+          <i class="fas fa-plus"></i>
+          <span class="folder-name">Add</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Password Grid -->
+  <section class="password-section">
+    {% for pwd in passwords %}
+      <div class="password-tile">
+        <div class="tile-header">
+          <h4>{{ pwd.title }}</h4>
+          <!-- Attach the password ID using a data attribute -->
+           <!--This is the point where we assign passwd id of the entry to data-password-id from db
+           -->
+          <button class="delete-password-btn" data-password-id="{{ pwd.id }}">🚫</button>
+          <button class="edit-password-btn" data-password-id="{{ pwd.id }}" 
+          data-title="{{ pwd.title }}" 
+          data-username="{{ pwd.username }}" 
+          data-password="{{ pwd.password }}" 
+          data-url="{{ pwd.url }}">✏️</button>
+
+        </div>
+        <p>Username: {{ pwd.username }}</p>
+        <p>Password: {{ pwd.password }}</p>
+        <a href="{{ pwd.url }}" target="_blank" style="color: #64ffda;">Visit</a>
+      </div>
+    {% endfor %}
+
+    <!-- Add Password Tile -->
+    <div class="password-tile add-tile" onclick="openPasswordModal()">
+      <i class="fas fa-plus"></i>
+      <p>Add Password</p>
+    </div>
+  </section>
+
+  <!-- Add Folder Modal -->
+  <div class="modal" id="folderModal">
+    <form method="POST" action="{{ url_for('dashboard.add_folder') }}">
+      {{ folder_form.hidden_tag() }}
+      <label>Folder Name</label>
+      {{ folder_form.folder_name() }}
+      {{ folder_form.submit() }}
+      <button type="button" onclick="closeFolderModal()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- Add Password Modal -->
+  <div class="modal" id="passwordModal">
+    <form onsubmit="submitPassword(event)">
+      <input type="hidden" id="folder_id" value="{{ current_folder.id }}">
+      <label>Title</label>
+      <input type="text" id="title" required>
+      <label>Username</label>
+      <input type="text" id="username" required>
+      <label>Password</label>
+      <input type="text" id="password" required>
+      <label>URL</label>
+      <input type="text" id="url">
+      <button type="submit">Save</button>
+      <button type="button" onclick="closePasswordModal()">Cancel</button>
+    </form>
+  </div>
+  <!--Edit Password Modal-->
+  <div id="editModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span id="closeEditModal" style="cursor:pointer;">&times;</span>
+    <h2>Edit Password</h2>
+    <form id="editPasswordForm">
+      <input type="text" id="editTitle" placeholder="Title" required>
+      <input type="text" id="editUsername" placeholder="Username" required>
+      <input type="text" id="editPassword" placeholder="New Password (optional)">
+      <input type="text" id="editUrl" placeholder="URL">
+      <input type="hidden" id="editEntryId">
+      <button type="submit">Update</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // --- Modal Control Functions ---
+  function openFolderModal() {
+    document.getElementById("folderModal").style.display = "block";
+  }
+
+  function closeFolderModal() {
+    document.getElementById("folderModal").style.display = "none";
+  }
+
+  function openPasswordModal() {
+    document.getElementById("passwordModal").style.display = "block";
+  }
+
+  function closePasswordModal() {
+    document.getElementById("passwordModal").style.display = "none";
+  }
+
+  // --- Submit New Password Entry ---
+  async function submitPassword(e) {
+    e.preventDefault();  // Prevent default form submission
+
+    const payload = {
+      title: document.getElementById("title").value,
+      username: document.getElementById("username").value,
+      password: document.getElementById("password").value,
+      url: document.getElementById("url").value,
+      folder_id: document.getElementById("folder_id").value
+    };
+
+    const res = await fetch("/create_password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      window.location.reload();  // Refresh to update the tile view
+    } else {
+      alert("Error creating password.");
+    }
+  }
+
+  // --- Delete a Password Entry by ID ---
+  async function deletePassword(id) {
+    if (!confirm("Are you sure you want to delete this password?")) return;
+
+    const res = await fetch(`/delete_password/${id}`, {
+      method: "DELETE"
+    });
+
+    if (res.ok) {
+      window.location.reload();  // Refresh to reflect deletion
+    } else {
+      alert("Error deleting password.");
+    }
+  }
+  document.addEventListener("DOMContentLoaded", () => {
+  // Edit logic
+  //This selects all the "edit" buttons tied to different password entries
+  const editBtns = document.querySelectorAll(".edit-password-btn");
+  const editModal = document.getElementById("editModal");
+  const closeEditModal = document.getElementById("closeEditModal");
+
+  const editForm = document.getElementById("editPasswordForm");
+  const editEntryId = document.getElementById("editEntryId");
+
+  editBtns.forEach(btn => {
+    //When a user clicks an edit button:The modal pops up.
+    // Input fields are filled with existing data.
+    // The entry's ID (from data-password-id) is stored in a hidden field (editEntryId).
+    btn.addEventListener("click", () => {
+      // Fill modal with existing values obtained from password GRID
+      document.getElementById("editTitle").value = btn.getAttribute("data-title");
+      document.getElementById("editUsername").value = btn.getAttribute("data-username");
+      document.getElementById("editPassword").value = "";
+      document.getElementById("editUrl").value = btn.getAttribute("data-url");
+      //Goto Password GRID section to understand what value is assigned to data-password-id
+      editEntryId.value = btn.getAttribute("data-password-id");//When edit btn is clicked editentryid
+      // ie a hidden field is assigned the passwd-tile id to target that specific tiles data 
+      editModal.style.display = "block";
+    });
+  });
+
+  closeEditModal.addEventListener("click", () => {
+    editModal.style.display = "none";
+  });
+
+  editForm.addEventListener("submit", async (e) => {
+    //Prevents the default form submission.
+    e.preventDefault();
+
+    const id = editEntryId.value;
+
+    const res = await fetch(`/update_password/${id}`, {
+      method: "POST",
+      //Tells the server:The data I'm sending is in JSON format ie retrieved using data =
+      // request.get_json()
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        //getting the values stored in the form and passsing it in json format to be used by route
+        title: document.getElementById("editTitle").value,
+        username: document.getElementById("editUsername").value,
+        password: document.getElementById("editPassword").value,
+        url: document.getElementById("editUrl").value
+      })
+    });
+
+    if (res.ok) {
+      editModal.style.display = "none";
+      window.location.reload(); // Or update the DOM manually
+    } else {
+      alert("Error updating password.");
+    }
+  });
+});
+
+
+  // --- Attach Click Listeners to Delete Buttons (after DOM is loaded) ---
+  document.addEventListener("DOMContentLoaded", () => {
+    // Get all delete buttons (they must have class "delete-password-btn" and a data attribute)
+    const deleteBtns = document.querySelectorAll(".delete-password-btn");
+
+    deleteBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-password-id");
+        deletePassword(id);  // Call the delete function with ID
+      });
+    });
+
+    // Attach submit listener to password form
+    const passwordForm = document.getElementById("passwordForm");
+    if (passwordForm) {
+      passwordForm.addEventListener("submit", submitPassword);
+    }
+  });
+</script>
+
+
+</body>
+</html>

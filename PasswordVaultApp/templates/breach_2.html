@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breach Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/breach_p.css') }}">
+    <script>
+        async function showBreachData() {
+            let response = await fetch("/get_breach_data");  // Fetch breach data
+            let breachData = await response.json();  // Convert JSON response to object
+
+            let display = document.getElementById("breach-results");
+            display.innerHTML = ""; // Clear previous content
+
+            if (!breachData || breachData.length === 0) {
+                display.innerHTML = "<p>No breach data found.</p>";
+                return;
+            }
+
+            // Format the breach data for clean UI display
+            breachData.forEach(breach => {
+                let breachEntry = document.createElement("div");
+                breachEntry.classList.add("breach-entry");
+
+                breachEntry.innerHTML = `
+                    <h2>${breach.Name}</h2>
+                    <p><strong>Domain:</strong> ${breach.Domain}</p>
+                    <p><strong>Breached on:</strong> ${breach.BreachDate}</p>
+                    <p><strong>Description:</strong> ${breach.Description}</p>
+                `;
+                display.appendChild(breachEntry);
+            });
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">CyberSafe</div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/breachdata">Breach Data</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <h1>Breach Data Report</h1>
+        <p class="dynamic-text">Find out if your credentials were exposed in a data breach.</p>
+        <button class="check-btn" onclick="showBreachData()">Show Breach Data</button>
+    </div>
+
+    <section id="breach-results" class="breach-container">
+        <p>Click the button above to load breach data.</p>
+    </section>
+
+    <footer>
+        <p>Stay Safe Online! © 2025 CyberSafe</p>
+    </footer>
+</body>
+</html>

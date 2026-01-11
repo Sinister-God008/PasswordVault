@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!--Here we are designing the forms fields lyk email,password,username,
+confirm_password to actually interact with the user-->
+  <div class="content-section">
+    <form method="POST" action="">
+      <!--hidden.tag adds the csrf token used for enhancing the security 
+      of the form as used in FlaskForm method of class flask_wtf-->
+      {{form.hidden_tag()}}
+      <fieldset class='form-group'>
+        <!--border-btm-mb4 adds the border at bottom with margin of 4px-->
+        <legend class="join border-btm-mb4">JOIN TODAY</legend>
+
+        <!--the methods we are accessing are the same as defined in the forms.py lyk
+         username,email,password,confirm-password -->
+        <div class="form-group">
+          <!--form-control-label is my each fields heading-->         
+          {{form.username.label(class='form-control-label')}}
+          <!--This here checks for errors and sends warnings if any validators rule 
+          is not followed in the given input by the user-->
+          {% if form.username.errors %}
+            {{form.username(class='form-control form-control-lg is-invalid')}}
+            <div class="inavlid-feedback">
+              {% for error in form.username.errors%}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{form.username(class='form-control form-control-lg')}}
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <!--form-control-label is my each fields heading-->
+          {{form.email.label(class='form-control-label')}}
+          <!--This here checks for errors and sends warnings if any validators rule is 
+          not followed in the given input by the user-->
+          {% if form.email.errors %}
+            {{form.email(class='form-control form-control-lg is-invalid')}}
+            <div class="inavlid-feedback">
+              {% for error in form.email.errors%}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{form.email(class='form-control form-control-lg')}}
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <!--form-control-label is my each fields heading-->
+          {{form.password.label(class='form-control-label')}}
+          <!--This here checks for errors and sends warnings if any validators rule is
+           not followed in the given input by the user-->
+          {% if form.password.errors %}
+            {{form.password(class='form-control form-control-lg is-invalid')}}
+            <div class="inavlid-feedback">
+              {% for error in form.password.errors%}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{form.password(class='form-control form-control-lg')}}
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <!--form-control-label is my each fields heading-->
+          {{form.confirm_password.label(class='form-control-label')}}
+          <!--This here checks for errors and sends warnings if any validators rule is
+           not followed in the given input by the user-->
+          {% if form.confirm_password.errors %}
+            {{form.confirm_password(class='form-control form-control-lg is-invalid')}}
+            <div class="inavlid-feedback">
+              {% for error in form.confirm_password.errors%}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{form.confirm_password(class='form-control form-control-lg')}}
+          {% endif %}
+        </div>
+      </fieldset>
+      <div class="form-group">
+        {{form.submit(class="btn btn-outline-info")}}
+        <small class="Login">Already Have An Account? <a class="Login-link" href="{{url_for('auth.login')}}">
+          Sign In</a></small>
+      </div>
+    </form>
+  </div>
+{% endblock %}

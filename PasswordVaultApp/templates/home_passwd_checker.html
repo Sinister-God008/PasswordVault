@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/passwd.css') }}">
+    <!--This part in the code is react related-->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!--This part in the code is Javascript related-->
+    <script>
+        async function check_p() {
+            let password = document.getElementById("password-input").value;
+
+            if (!password) {
+                alert("Please enter a password to check.");
+                return;
+            }
+
+            try {
+                let response = await fetch("http://127.0.0.1:5001/check_p", {  // Make sure the URL matches Flask
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ password: password })  // Send password as JSON
+                });
+
+                if (!response.ok) {  // Check if response is not 200
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                let result = await response.json(); // Convert JSON response to object
+
+                let display = document.getElementById("breach-results");
+                display.innerHTML = "";  // Clear previous content
+
+                if (result.error) {
+                    display.innerHTML = `<p style="color:red;">${result.error}</p>`;
+                    return;
+                }
+
+                // Display breach and strength info
+                display.innerHTML = `
+                    <p><strong>Password Strength:</strong> ${result.strength}</p>
+                    <p><strong>Breach Status:</strong> ${result.breached}</p>
+                `;
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Failed to check password. Please try again.");
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🔐 SecurePass</div>
+        <ul class="nav-links">
+            <li><a href="{{url_for('home.home')}}">Home</a></li>
+            <li><a href="{{url_for('Breach_data.breach')}}">Breach Data</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="{{url_for('auth.register')}}">Register</a></li>
+            <li><a href="{{url_for('auth.login')}}">Login</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <h1>Protect Your Passwords with SecurePass</h1>
+        <p>Check if your credentials have been compromised using the **Have I Been Pwned API**.</p>
+        <!--creates a text box to take user input-->
+        <input type="password" id="password-input" placeholder="Enter your password">
+        <button class="check-btn" onclick="check_p()">Check Your Password</button>
+        <div id="breach-results"></div>
+    </header>
+
+    <section id="why-choose">
+        <h2>Why Choose SecurePass?</h2>
+        <ul>
+            <li>✅ Free and Easy to Use</li>
+            <li>✅ Secure API Integration</li>
+            <li>✅ No Password Storage</li>
+            <li>✅ Real-Time Data Breach Detection</li>
+        </ul>
+    </section>
+
+    <div id="animated-section"></div>
+
+    <footer id="contact">
+        <h3>Contact Us</h3>
+        <p>Email: <a href="mailto:sinister.hacker123@gmail.com">sinister.hacker123@gmail.com</a></p>
+        <textarea id="review-box" placeholder="Leave a review..."></textarea>
+        <button onclick="submitReview()">Submit</button>
+    </footer>
+<!--This codeblock is part of React which animates the features displayed on webpage about site-->
+    <script type="text/babel">
+        function AnimatedText() {
+            const [text, setText] = React.useState("🔍 Checking passwords made simple.");
+            React.useEffect(() => {
+                const phrases = [
+                    "🔒 Stay Secure, Stay Safe.",
+                    "🚀 Protect Your Online Identity.",
+                    "🛡️ Your Security is Our Priority.",
+                    "🔍 Checking passwords made simple."
+                ];
+                let index = 0;
+                const interval = setInterval(() => {
+                    index = (index + 1) % phrases.length;
+                    setText(phrases[index]);
+                }, 3000);
+                return () => clearInterval(interval);
+            }, []);
+            return <h2 className="dynamic-text">{text}</h2>;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("animated-section"));
+        root.render(<AnimatedText />);
+        
+        function submitReview() {
+            alert("Thank you for your feedback!");
+            document.getElementById("review-box").value = "";
+        }
+    </script>
+</body>
+</html>

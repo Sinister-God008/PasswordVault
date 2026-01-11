@@ -1,0 +1,274 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0a1e33;
+}
+
+.main-header {
+  background: #0a1e33;
+  color: #64ffda;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-right a{
+  text-decoration: none;
+  color: aliceblue;
+}
+.header-right a:hover{
+  color: #dc143c	;
+}
+.macnt{
+  margin-right: 20px;
+}
+.folder-bar-wrapper {
+  width: 100%;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.folder-background-tile {
+  width: 100%;
+  background-color: #1a2b3a;
+  border-radius: 16px;
+  padding: 16px 24px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.folder-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+/* Scrollbar styling (optional) */
+.folder-bar::-webkit-scrollbar {
+  height: 6px;
+}
+.folder-bar::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+/* Folder Button Styling */
+.folder-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.folder-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Make folder-btn relative for hover detection */
+.folder-btn {
+  position: relative;
+  background-color: #0a192f;
+  border: none;
+  color: white;
+  font-size: 14px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+.folder-btn.active {
+  background-color:steelblue; /* dark background when active */
+  color: whitesmoke;            /* sky blue text/icon when active */
+  font-weight: bold;
+}
+.folder-btn:hover {
+  background-color: #1f2f4d;
+}
+
+.folder-name {
+  margin: 0;
+  color: #ccd6f6; /* Text color */
+}
+/*Delete Button*/
+.delete-folder-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: transparent; /* Remove white background */
+  border: none;
+  font-size: 12px;
+  border-radius: 50%;
+  color: #ff4d4f;
+  cursor: pointer;
+  padding: 0; /* Remove padding so it doesn’t expand */
+  box-shadow: none; /* Remove shadow */
+  display: none;
+  z-index: 10;
+}
+
+/* Show delete on hover */
+.folder-item:hover .delete-folder-btn {
+  display: block;
+}
+/* Add folder button style */
+.folder-btn.add {
+  background-color: #1c2e4a;
+  color: #64ffda;
+}
+
+
+.password-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.password-tile {
+  width: 180px;
+  background: slategrey;
+  color: black;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.password-tile:hover {
+  border-color: #64ffda;
+  transform: scale(1.03);
+  cursor: pointer;
+}
+.password-tile .tile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.edit-password-btn{
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 18px;
+  cursor: pointer;
+  color: #e53935;
+  line-height: 1;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+.delete-password-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-left: 25px;
+  font-size: 25px;
+  cursor: pointer;
+  color: #e53935;
+  line-height: 1;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.delete-password-btn:hover,.edit-password-btn:hover {
+  background-color: rgba(229, 57, 53, 0.1); /* light red background */
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.add-tile {
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  text-align: center;
+  color: black;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 35%;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+/* Modal overlay background */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7); /* semi-transparent black */
+  backdrop-filter: blur(5px); /* glass effect */
+}
+.modal label{
+  color:white;
+}
+/* Modal content box */
+.modal-content {
+  background: #121212;
+  color: #ffffff;
+  margin: 10% auto;
+  padding: 30px 25px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 24px rgba(0, 255, 255, 0.1);
+  border: 1px solid #64ffda;
+  position: relative;
+}
+
+/* Close button (X) */
+#closeEditModal {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 20px;
+  color: #64ffda;
+}
+
+/* Input fields */
+.modal-content input {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px;
+  border: 1px solid #64ffda;
+  border-radius: 8px;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+/* Submit button */
+.modal-content button[type="submit"] {
+  background-color: #64ffda;
+  color: #121212;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button[type="submit"]:hover {
+  background-color: #32c9aa;
+}
+.modal {
+  transition: all 0.3s ease;
+}

@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0f0f0f;
+  color: #ffffff;
+}
+
+.account-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #1e1e1e;
+  border: 1px solid #64ffda;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(100, 255, 218, 0.2);
+}
+
+h1 {
+  text-align: center;
+  color: #64ffda;
+  margin-bottom: 30px;
+}
+
+.account-section {
+  padding: 15px;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.account-section p {
+  margin: 10px 0;
+}
+
+.danger-heading {
+  color: #ff4d4d;
+  margin-top: 20px;
+}
+
+.danger-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.danger-btn:hover {
+  background-color: #d93636;
+  transform: scale(1.15);
+}
+
+hr {
+  border: 1px solid #64ffda;
+  margin: 30px 0;
+}
+
+.back-link {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.back-link a {
+  color: #64ffda;
+  text-decoration: none;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}

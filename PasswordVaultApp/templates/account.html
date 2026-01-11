@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Account</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/accounts.css') }}">
+</head>
+<body>
+  <div class="account-container">
+    <h1>👤 Account Info</h1>
+
+    <div class="account-section">
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Member Since:</strong> <em>Not Available</em></p>  <!-- or replace with actual date -->
+    </div>
+
+    <hr>
+
+    <h2 class="danger-heading">⚠️ Danger Zone</h2>
+    <form method="POST" action="{{ url_for('dashboard.delete_account') }}">
+      <button type="submit" class="danger-btn">🗑️ Delete My Account</button>
+    </form>
+
+    <div class="back-link">
+      <a href="{{ url_for('dashboard.db_home') }}">⬅️ Back to Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>
