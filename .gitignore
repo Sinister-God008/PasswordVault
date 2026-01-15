@@ -3,10 +3,10 @@
 encrypt.env
 
 # Local admin / debug scripts
-check_db.py
+check-db.py
 reset_db.py
-clearusers.py
-testenv.py
+clear-users.py
+test_env.py
 
 # Python stuff
 __pycache__/
