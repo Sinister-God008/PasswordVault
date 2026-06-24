@@ -1,0 +1,19 @@
+<footer class="public-footer">
+  <div class="container">
+    <div class="footer-brand">
+      <div class="brand-icon sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      SecurePass
+    </div>
+    <div class="footer-links">
+      <a href="{{ url_for('pages.index') }}">Home</a>
+      <a href="{{ url_for('pages.contact') }}">Contact</a>
+      <a href="{{ url_for('auth.login') }}">Sign In</a>
+      <a href="{{ url_for('auth.register') }}">Register</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 SecurePass. All rights reserved.</p>
+  </div>
+</footer>

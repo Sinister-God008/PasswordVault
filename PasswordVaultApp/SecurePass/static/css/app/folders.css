@@ -1,0 +1,8 @@
+/* Folders */
+.folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.folder-card { display: flex; flex-direction: column; gap: 16px; }
+.folder-header { display: flex; align-items: center; gap: 12px; }
+.folder-icon { width: 40px; height: 40px; background: rgba(30,58,95,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0; }
+.folder-name { font-weight: 700; font-size: 0.95rem; }
+.folder-count { font-size: 0.8rem; color: var(--text-muted); }
+.folder-actions { display: flex; gap: 6px; flex-wrap: wrap; }

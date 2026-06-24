@@ -1,0 +1,12 @@
+/* ━━━━━━━━━━━━━━━ PUBLIC LAYOUT ━━━━━━━━━━━━━━━ */
+.public-page { background: var(--bg); }
+
+/* Page hero slim */
+.page-hero.slim { background: linear-gradient(135deg, var(--primary), #2D5A8E); color: #fff; padding: 56px 0 44px; }
+.page-hero.slim h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+.page-hero.slim p { color: rgba(255,255,255,0.75); }
+
+/* ── Brand ── */
+.brand-icon { background: var(--primary); color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; }
+.brand-icon.lg { width: 44px; height: 44px; }
+.brand-icon.sm { width: 28px; height: 28px; border-radius: 6px; }

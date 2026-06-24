@@ -1,0 +1,7 @@
+/* Footer */
+.public-footer { background: var(--primary); color: rgba(255,255,255,0.75); padding: 40px 0; text-align: center; }
+.footer-brand { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; color: #fff; margin-bottom: 16px; font-size: 1rem; }
+.footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+.footer-links a { color: rgba(255,255,255,0.65); font-size: 0.875rem; transition: color var(--transition); }
+.footer-links a:hover { color: #fff; }
+.footer-copy { font-size: 0.8rem; color: rgba(255,255,255,0.45); }

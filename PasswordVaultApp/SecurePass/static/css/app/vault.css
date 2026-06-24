@@ -1,0 +1,46 @@
+/* Vault table */
+.vault-table-wrap { padding: 0; overflow: hidden; }
+.vault-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.vault-table th { padding: 12px 16px; text-align: left; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); border-bottom: 1px solid var(--border); background: #F8FAFC; }
+.vault-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.vault-table tr:last-child td { border-bottom: none; }
+.vault-table tr:hover td { background: #F8FAFC; }
+
+.entry-name-cell { display: flex; align-items: center; gap: 6px; }
+.entry-link { font-weight: 600; color: var(--text); }
+.entry-link:hover { color: var(--primary); }
+.entry-sub { font-size: 0.78rem; color: var(--text-muted); }
+
+.date-cell { font-size: 0.82rem; color: var(--text-muted); white-space: nowrap; }
+.actions-cell { display: flex; gap: 4px; align-items: center; }
+.action-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 5px; border-radius: 4px; display: flex; transition: color var(--transition), background var(--transition); }
+.action-btn:hover { color: var(--primary); background: var(--bg); }
+.action-btn.danger:hover { color: var(--danger); }
+
+.badge-danger { color: var(--danger); font-size: 0.85rem; }
+
+/* Type badges */
+.type-badge { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; background: rgba(30,58,95,0.08); color: var(--primary); white-space: nowrap; }
+.type-badge.type-password    { background: #EFF6FF; color: #1D4ED8; }
+.type-badge.type-api_key     { background: #F5F3FF; color: #6D28D9; }
+.type-badge.type-ssh_key     { background: #F0FDF4; color: #15803D; }
+.type-badge.type-env_var     { background: #FFF7ED; color: #C2410C; }
+.type-badge.type-secure_note { background: #F0F9FF; color: #0369A1; }
+.type-badge.type-database_credential { background: #FDF4FF; color: #9333EA; }
+.type-badge.type-jwt_secret  { background: #FEFCE8; color: #CA8A04; }
+
+/* Inline strength */
+.inline-strength { display: flex; align-items: center; gap: 6px; }
+.mini-bar { width: 56px; height: 5px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.mini-fill { height: 100%; border-radius: 4px; }
+.strength-num { font-size: 0.78rem; color: var(--text-muted); }
+
+/* Filter bar */
+.filter-bar { margin-bottom: 16px; }
+.filter-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* Empty state */
+.empty-vault { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 72px 24px; text-align: center; }
+.empty-vault h3 { font-size: 1.05rem; font-weight: 700; }
+.empty-vault p { color: var(--text-muted); font-size: 0.875rem; }
+.empty-state { color: var(--text-muted); font-size: 0.875rem; padding: 24px 0; text-align: center; }

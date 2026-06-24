@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{{ entry.name }}{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  {% include "partials/app_sidebar.html" %}
+  <main class="app-main">
+    {% include "partials/flash.html" %}
+    <div class="page-header">
+      <div>
+        <a href="{{ url_for('vault.index') }}" class="breadcrumb">← Vault</a>
+        <h1 class="page-title">{{ entry.name }}</h1>
+        <span class="type-badge type-{{ entry.type }}">{{ entry.type.replace('_',' ') }}</span>
+      </div>
+      <div class="page-header-actions">
+        <a href="{{ url_for('vault.edit', entry_id=entry.id) }}" class="btn btn-outline">Edit</a>
+        <form method="POST" action="{{ url_for('vault.delete', entry_id=entry.id) }}"
+              onsubmit="return confirm('Permanently delete this entry?')">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="card detail-card">
+        <h2 class="card-title">Secret Value</h2>
+        <div class="secret-reveal-box">
+          <code id="secret-val" class="secret-masked">••••••••••••••••</code>
+          <button class="btn btn-outline sm" onclick="revealSecret()">Reveal</button>
+          <button class="btn btn-ghost sm" onclick="copySecret()">Copy</button>
+        </div>
+        <input type="hidden" id="secret-raw" value="{{ secret }}" />
+
+        {% if score is not none %}
+        <div class="strength-section">
+          <div class="strength-row">
+            <span class="form-label">Password Strength</span>
+            <span class="strength-badge
+              {% if score >= 70 %}s-strong{% elif score >= 40 %}s-fair{% else %}s-weak{% endif %}">
+              {{ strength_label }} ({{ score }}/100)
+            </span>
+          </div>
+          <div class="strength-bar full">
+            <div class="strength-fill
+              {% if score >= 70 %}fill-strong{% elif score >= 40 %}fill-fair{% else %}fill-weak{% endif %}"
+              style="width:{{ score }}%"></div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="card detail-card">
+        <h2 class="card-title">Details</h2>
+        <dl class="detail-list">
+          {% if entry.username %}
+          <div class="detail-row">
+            <dt>Username</dt>
+            <dd>{{ entry.username }}
+              <button class="copy-btn" onclick="copyText('{{ entry.username }}')">Copy</button>
+            </dd>
+          </div>
+          {% endif %}
+          {% if entry.url %}
+          <div class="detail-row">
+            <dt>URL</dt>
+            <dd><a href="{{ entry.url }}" target="_blank" rel="noopener">{{ entry.url }}</a></dd>
+          </div>
+          {% endif %}
+          {% if entry.folder_name %}
+          <div class="detail-row"><dt>Folder</dt><dd>{{ entry.folder_name }}</dd></div>
+          {% endif %}
+          {% if entry.rotation_interval_days %}
+          <div class="detail-row"><dt>Rotation</dt><dd>Every {{ entry.rotation_interval_days }} days</dd></div>
+          {% endif %}
+          <div class="detail-row"><dt>Created</dt><dd>{{ entry.created_at.strftime('%B %d, %Y at %H:%M') }}</dd></div>
+          <div class="detail-row"><dt>Last Changed</dt><dd>{{ entry.last_changed_at.strftime('%B %d, %Y at %H:%M') }}</dd></div>
+          {% if entry.is_breached %}
+          <div class="detail-row"><dt>Breach Status</dt><dd class="text-danger">⚠ Found in breach database</dd></div>
+          {% endif %}
+        </dl>
+        {% if entry.notes %}
+        <div class="notes-section">
+          <p class="form-label">Notes</p>
+          <p class="notes-text">{{ entry.notes }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let revealed = false;
+function revealSecret() {
+  const el = document.getElementById('secret-val');
+  const raw = document.getElementById('secret-raw').value;
+  if (!revealed) { el.textContent = raw; revealed = true; event.target.textContent = 'Hide'; }
+  else { el.textContent = '••••••••••••••••'; revealed = false; event.target.textContent = 'Reveal'; }
+}
+function copySecret() {
+  const raw = document.getElementById('secret-raw').value;
+  navigator.clipboard.writeText(raw).then(() => showCopied(event.target));
+}
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showCopied(event.target));
+}
+function showCopied(btn) {
+  const orig = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+/* ── Container ── */
+.container { max-width: 1160px; margin: 0 auto; padding: 0 2rem; }
+.container.narrow { max-width: 680px; }
+
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+
+.text-danger  { color: var(--danger); }
+.text-warning { color: var(--warning); }
+.mono-text { font-family: monospace; font-size: 0.82rem; }
+/* Utilities */
+.hidden { display: none !important; }

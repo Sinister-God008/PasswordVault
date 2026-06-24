@@ -1,0 +1,5 @@
+/* Modal */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 500; }
+.modal.hidden { display: none; }
+.modal-box { background: #fff; border-radius: var(--radius); padding: 28px; width: 400px; max-width: 90vw; box-shadow: var(--shadow-lg); }
+.modal-box h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }

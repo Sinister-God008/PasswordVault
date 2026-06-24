@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Folders{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  {% include "partials/app_sidebar.html" %}
+  <main class="app-main">
+    {% include "partials/flash.html" %}
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Folders</h1>
+        <p class="page-sub">Organise your vault entries into groups.</p>
+      </div>
+    </div>
+
+    <div class="card form-card mb-6">
+      <h2 class="card-title mb-4">Create New Folder</h2>
+      <form method="POST" action="{{ url_for('folders.create') }}" class="form inline-form">
+        <input type="text" name="name" class="form-input" placeholder="Folder name…" required />
+        <button type="submit" class="btn btn-primary">Create</button>
+      </form>
+    </div>
+
+    {% if folders %}
+    <div class="folders-grid">
+      {% for f in folders %}
+      <div class="folder-card card">
+        <div class="folder-header">
+          <div class="folder-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="folder-name">{{ f.name }}</h3>
+            <span class="folder-count">{{ f.entry_count }} secret{% if f.entry_count != 1 %}s{% endif %}</span>
+          </div>
+        </div>
+        <div class="folder-actions">
+          <a href="{{ url_for('vault.index') }}?folder_id={{ f.id }}" class="btn btn-ghost sm">View Entries</a>
+          <button class="btn btn-outline sm" onclick="showRename({{ f.id }}, '{{ f.name }}')">Rename</button>
+          <form method="POST" action="{{ url_for('folders.delete', folder_id=f.id) }}"
+                onsubmit="return confirm('Delete folder \'{{ f.name }}\'? Entries inside will not be deleted.')">
+            <button type="submit" class="btn btn-danger sm">Delete</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-vault card">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#CBD5E0" stroke-width="1.5">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+      </svg>
+      <h3>No folders yet</h3>
+      <p>Create a folder above to start organising your vault.</p>
+    </div>
+    {% endif %}
+  </main>
+</div>
+
+<div id="rename-modal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Rename Folder</h3>
+    <form id="rename-form" method="POST" class="form">
+      <input type="text" id="rename-input" name="name" class="form-input" required />
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeRename()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Rename</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showRename(id, name) {
+  document.getElementById('rename-form').action = `/folders/${id}/rename`;
+  document.getElementById('rename-input').value = name;
+  document.getElementById('rename-modal').classList.remove('hidden');
+}
+function closeRename() { document.getElementById('rename-modal').classList.add('hidden'); }
+</script>
+{% endblock %}

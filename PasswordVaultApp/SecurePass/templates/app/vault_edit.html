@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Edit — {{ entry.name }}{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  {% include "partials/app_sidebar.html" %}
+  <main class="app-main">
+    {% include "partials/flash.html" %}
+    <div class="page-header">
+      <div>
+        <a href="{{ url_for('vault.detail', entry_id=entry.id) }}" class="breadcrumb">← {{ entry.name }}</a>
+        <h1 class="page-title">Edit Entry</h1>
+      </div>
+      <a href="{{ url_for('vault.detail', entry_id=entry.id) }}" class="btn btn-outline">Cancel</a>
+    </div>
+
+    <div class="card form-card">
+      <form method="POST" class="form">
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <input type="text" class="form-input" value="{{ entry.type.replace('_',' ').title() }}" disabled />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Name <span class="required">*</span></label>
+            <input type="text" name="name" class="form-input" required value="{{ entry.name }}" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">New Secret Value <span class="optional">(leave blank to keep current)</span></label>
+          <div class="input-wrapper">
+            <input type="password" id="secret" name="secret" class="form-input"
+                   placeholder="Enter new value to replace, or leave blank" oninput="updateStrength(this.value)" />
+            <button type="button" class="toggle-pw" onclick="togglePw('secret', this)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="strength-bar"><div id="strength-fill" class="strength-fill"></div></div>
+          <span id="strength-label" class="strength-text"></span>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-input" value="{{ entry.username or '' }}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">URL</label>
+            <input type="url" name="url" class="form-input" value="{{ entry.url or '' }}" />
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label">Folder</label>
+            <select name="folder_id" class="form-input">
+              <option value="">No Folder</option>
+              {% for f in folders %}
+              <option value="{{ f.id }}" {% if entry.folder_id == f.id %}selected{% endif %}>{{ f.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rotation Interval</label>
+            <select name="rotation_interval_days" class="form-input">
+              <option value="">No Reminder</option>
+              {% for d in [30, 60, 90, 180, 365] %}
+              <option value="{{ d }}" {% if entry.rotation_interval_days == d %}selected{% endif %}>
+                {{ d if d < 365 else '1 year' }}{% if d < 365 %} days{% endif %}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea name="notes" class="form-input" rows="3">{{ entry.notes or '' }}</textarea>
+        </div>
+
+        <div class="form-actions">
+          <a href="{{ url_for('vault.detail', entry_id=entry.id) }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateStrength(pw) {
+  let score = 0;
+  if (pw.length >= 8) score += 20; if (pw.length >= 12) score += 20;
+  if (/[A-Z]/.test(pw)) score += 15; if (/[0-9]/.test(pw)) score += 15;
+  if (/[^a-zA-Z0-9]/.test(pw)) score += 30;
+  const fill = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+  if (!fill) return;
+  fill.style.width = score + '%';
+  if (score < 30) { fill.style.background='#EF4444'; label.textContent='Weak'; label.style.color='#EF4444'; }
+  else if (score < 60) { fill.style.background='#F59E0B'; label.textContent='Fair'; label.style.color='#F59E0B'; }
+  else if (score < 80) { fill.style.background='#3B82F6'; label.textContent='Good'; label.style.color='#3B82F6'; }
+  else { fill.style.background='#059669'; label.textContent='Strong'; label.style.color='#059669'; }
+}
+</script>
+{% endblock %}

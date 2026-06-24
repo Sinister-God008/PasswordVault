@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  {% include "partials/app_sidebar.html" %}
+  <main class="app-main">
+    {% include "partials/flash.html" %}
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Security Overview</h1>
+        <p class="page-sub">Real-time analysis of your vault's security posture.</p>
+      </div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card score-card">
+        <p class="metric-label">Security Score</p>
+
+        {% if score is none %}
+        <div class="score-ring-wrap">
+          <svg class="score-ring" viewBox="0 0 120 120" width="120" height="120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" stroke-width="10"/>
+          </svg>
+          <div class="score-value">N/A</div>
+        </div>
+        <p class="metric-sublabel">
+          Add passwords to begin analysis
+        </p>
+
+        {% else %}
+
+        <div class="score-ring-wrap">
+          <svg class="score-ring" viewBox="0 0 120 120" width="120" height="120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none"
+              stroke="{% if score >= 80 %}#059669{% elif score >= 60 %}#3B82F6{% elif score >= 40 %}#F59E0B{% else %}#EF4444{% endif %}"
+              stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="{{ (score / 100 * 314.16)|round(1) }} 314.16"
+              transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="score-value">{{ score }}<span>/100</span></div>
+        </div>
+        <p class="metric-sublabel">
+          {% if score >= 80 %}
+            Excellent
+          {% elif score >= 60 %}
+            Good
+          {% elif score >= 40 %}
+            Fair
+          {% else %}
+            Needs Attention
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+
+      <div class="metric-card">
+        <p class="metric-label">Total Secrets</p>
+        <p class="metric-number">{{ total }}</p>
+        <p class="metric-sublabel">stored in vault</p>
+      </div>
+      <div class="metric-card {% if weak > 0 %}metric-warn{% endif %}">
+        <p class="metric-label">Weak Passwords</p>
+        <p class="metric-number">{{ weak }}</p>
+        <p class="metric-sublabel">score &lt; 40</p>
+      </div>
+      <div class="metric-card {% if breached > 0 %}metric-danger{% endif %}">
+        <p class="metric-label">Breached</p>
+        <p class="metric-number">{{ breached }}</p>
+        <p class="metric-sublabel">found in breach DB</p>
+      </div>
+      <div class="metric-card {% if reused > 0 %}metric-warn{% endif %}">
+        <p class="metric-label">Reused</p>
+        <p class="metric-number">{{ reused }}</p>
+        <p class="metric-sublabel">duplicate secrets</p>
+      </div>
+      <div class="metric-card {% if old > 0 %}metric-warn{% endif %}">
+        <p class="metric-label">Outdated</p>
+        <p class="metric-number">{{ old }}</p>
+        <p class="metric-sublabel">not changed in 90+ days</p>
+      </div>
+    </div>
+
+    <div class="dashboard-row">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Rotation Required</h2>
+          <a href="{{ url_for('vault.index') }}" class="card-link">View all</a>
+        </div>
+        {% if rotation_due %}
+          <div class="list-items">
+            {% for e in rotation_due %}
+            <div class="list-item">
+              <div class="list-item-left">
+                <span class="type-badge type-{{ e.type }}">{{ e.type.replace('_',' ') }}</span>
+                <a href="{{ url_for('vault.detail', entry_id=e.id) }}" class="list-item-name">{{ e.name }}</a>
+              </div>
+              <span class="overdue-badge">{{ e.days_overdue }}d overdue</span>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="empty-state">No secrets are past their rotation date.</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Activity</h2>
+          <a href="{{ url_for('audit.index') }}" class="card-link">Full log</a>
+        </div>
+        {% if recent_logs %}
+          <div class="list-items">
+            {% for log in recent_logs %}
+            <div class="list-item">
+              <div class="list-item-left">
+                <span class="action-dot action-{{ log.action.split('_')[2] if log.action.count('_') >= 2 else 'other' }}"></span>
+                <div>
+                  <span class="list-item-name">{{ log.action.replace('_',' ').title() }}</span>
+                  {% if log.resource_name %}<span class="list-item-sub"> — {{ log.resource_name }}</span>{% endif %}
+                </div>
+              </div>
+              <span class="log-time">{{ log.created_at.strftime('%b %d, %H:%M') }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="empty-state">No recent activity recorded.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if type_breakdown %}
+    <div class="card">
+      <div class="card-header"><h2 class="card-title">Secret Types</h2></div>
+      <div class="type-breakdown">
+        {% for row in type_breakdown %}
+        <div class="type-row">
+          <span class="type-badge type-{{ row.type }}">{{ row.type.replace('_',' ') }}</span>
+          <div class="type-bar-wrap">
+            <div class="type-bar" style="--width: {{ row.percentage }}%;"></div>
+          </div>
+          <span class="type-count">{{ row.count }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

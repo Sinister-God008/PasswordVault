@@ -1,0 +1,53 @@
+#In this yaml file I have created 2 containers named web and db which are used to build Flask container and PostgreSQL containers resp
+services:
+
+  #This is the FLASK container
+  web:
+    build: .
+    container_name: securepass-web
+
+    #mapping the localhost of my laptop(my laptops ip where i'll access the app) to the container's port 5000
+    ports:
+      - "5000:5000"
+
+    #This basically creates a path or link bw Flask container and PostgreSQL container and tells to access the db-container via port 5432 of it
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+
+    #means start the db container before the web until it is up and running/healthy keep web container waiting
+    depends_on:
+      db:
+        condition: service_healthy
+
+  #This is the PostgreSQL container
+  db:
+    image: postgres:17
+
+    #This checks if the container is ready interms of database of securepass created for user securepass_user
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U securepass_user -d securepass"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    container_name: securepass-db
+
+    #This means keep restarting until the database is ready and not crash incase it is not
+    restart: always
+
+    #This tells what all details need to be used when PostgreSQL container starts like what user to create,what is its passwd andwhat db needed
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      #Basically we are running the first set of queries that is to create different tables from 
+      #init.sql once the container is up and running
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+#Creating the volume by the name of postgres_data which is stored in the container at the location
+#as mentioned in the volumes
+volumes:
+  postgres_data:

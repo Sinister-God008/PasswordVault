@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Vault{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  {% include "partials/app_sidebar.html" %}
+  <main class="app-main">
+    {% include "partials/flash.html" %}
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Vault</h1>
+        <p class="page-sub">{{ entries|length }} secret{% if entries|length != 1 %}s{% endif %}
+        {% if search %}matching "{{ search }}"{% endif %}</p>
+      </div>
+      <a href="{{ url_for('vault.new_entry') }}" class="btn btn-primary">+ New Entry</a>
+    </div>
+
+    <div class="filter-bar">
+      <form method="GET" class="filter-form">
+        <input type="text" name="search" class="form-input sm" placeholder="Search…" value="{{ search }}" />
+        <select name="type" class="form-input sm">
+          <option value="">All Types</option>
+          {% for t in entry_types %}
+          <option value="{{ t }}" {% if type_filter == t %}selected{% endif %}>{{ t.replace('_',' ').title() }}</option>
+          {% endfor %}
+        </select>
+        <select name="folder_id" class="form-input sm">
+          <option value="">All Folders</option>
+          {% for f in folders %}
+          <option value="{{ f.id }}" {% if folder_filter == f.id|string %}selected{% endif %}>{{ f.name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-outline sm">Filter</button>
+        {% if search or type_filter or folder_filter %}
+        <a href="{{ url_for('vault.index') }}" class="btn btn-ghost sm">Clear</a>
+        {% endif %}
+      </form>
+    </div>
+
+    {% if entries %}
+    <div class="vault-table-wrap card">
+      <table class="vault-table">
+        <thead>
+          <tr>
+            <th>Name</th><th>Type</th><th>Folder</th><th>Strength</th><th>Last Changed</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in entries %}
+          <tr class="vault-row">
+            <td>
+              <div class="entry-name-cell">
+                {% if e.is_breached %}<span class="badge-danger" title="Breached">⚠</span>{% endif %}
+                <a href="{{ url_for('vault.detail', entry_id=e.id) }}" class="entry-link">{{ e.name }}</a>
+                {% if e.username %}<span class="entry-sub">{{ e.username }}</span>{% endif %}
+              </div>
+            </td>
+            <td><span class="type-badge type-{{ e.type }}">{{ e.type.replace('_',' ') }}</span></td>
+            <td>{{ e.folder_name or '—' }}</td>
+            <td>
+              {% if e.strength_score is not none %}
+                <div class="inline-strength">
+                  <div class="mini-bar">
+                    <div class="mini-fill
+                      {% if e.strength_score >= 70 %}fill-strong
+                      {% elif e.strength_score >= 40 %}fill-fair
+                      {% else %}fill-weak{% endif %}"
+                      style="width:{{ e.strength_score }}%"></div>
+                  </div>
+                  <span class="strength-num">{{ e.strength_score }}</span>
+                </div>
+              {% else %}—{% endif %}
+            </td>
+            <td class="date-cell">{{ e.last_changed_at.strftime('%b %d, %Y') }}</td>
+            <td class="actions-cell">
+              <a href="{{ url_for('vault.detail', entry_id=e.id) }}" class="action-btn" title="View">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </a>
+              <a href="{{ url_for('vault.edit', entry_id=e.id) }}" class="action-btn" title="Edit">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </a>
+              <form method="POST" action="{{ url_for('vault.delete', entry_id=e.id) }}"
+                    onsubmit="return confirm('Delete {{ e.name }}? This cannot be undone.')">
+                <button type="submit" class="action-btn danger" title="Delete">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+                    <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                  </svg>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-vault card">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#CBD5E0" stroke-width="1.5">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <h3>Your vault is empty</h3>
+      <p>Add your first secret to get started.</p>
+      <a href="{{ url_for('vault.new_entry') }}" class="btn btn-primary">Add First Entry</a>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

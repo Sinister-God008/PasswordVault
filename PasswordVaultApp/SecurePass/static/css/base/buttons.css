@@ -1,0 +1,19 @@
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 20px; border-radius: var(--radius-sm); border: 1.5px solid transparent;
+  font-size: 0.875rem; font-weight: 600; cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition);
+  white-space: nowrap; text-decoration: none;
+}
+.btn-primary    { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-h); border-color: var(--primary-h); color: #fff; }
+.btn-outline    { background: transparent; color: var(--primary); border-color: var(--border-h); }
+.btn-outline:hover { border-color: var(--primary); background: rgba(30,58,95,0.05); }
+.btn-ghost      { background: transparent; color: var(--text-muted); border-color: transparent; }
+.btn-ghost:hover { background: var(--border); color: var(--text); }
+.btn-danger     { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn-danger:hover { background: #B91C1C; }
+.btn-lg         { padding: 13px 28px; font-size: 0.95rem; }
+.btn-sm, .btn.sm { padding: 6px 14px; font-size: 0.8rem; border-radius: var(--radius-sm); }
+.btn-full       { width: 100%; }

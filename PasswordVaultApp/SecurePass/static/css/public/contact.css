@@ -1,0 +1,10 @@
+/* Contact */
+.contact-section { padding: 64px 0; }
+.contact-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+.contact-info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+.contact-icon { width: 40px; height: 40px; background: rgba(30,58,95,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
+.contact-info-card strong { font-size: 0.88rem; font-weight: 700; }
+.contact-info-card span { font-size: 0.82rem; color: var(--text-muted); }
+.success-msg { text-align: center; padding: 32px; }
+.success-msg h3 { font-size: 1.2rem; font-weight: 700; margin: 12px 0 6px; }
+.success-msg p { color: var(--text-muted); }
