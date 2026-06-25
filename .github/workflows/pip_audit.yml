@@ -1,33 +1,39 @@
 name: Pip Audit
 
+#Triggers which dictate when the scan needs to run here when pushing to main or merging to main
 on:
   push:
     branches:
       - main
-      - dev
 
   pull_request:
     branches:
       - main
 
+#defining the tasks need to run in the scan
 jobs:
+  #installing lightweight ubuntu VM on github(temporarily)
   pip-audit:
     runs-on: ubuntu-latest
-
+    
     steps:
+      #adding repo files to the vm
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      #installing the Python on the VM  
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
+      #upgrading the pip and installing the pip-audit lib using bash command
       - name: Install pip-audit
         run: |
           python -m pip install --upgrade pip
           pip install pip-audit
 
+      #scans the python dependencies for vulnerabilities like flask,psycopg2
       - name: Audit Dependencies
         run: |
           pip-audit -r requirements.txt

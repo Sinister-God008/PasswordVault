@@ -1,42 +1,52 @@
 name: CodeQL
 
+#Triggers which dictate when the scan needs to run here when pushing to main or merging to main
 on:
   push:
     branches:
       - main
-      - dev
 
   pull_request:
     branches:
       - main
 
 jobs:
+  #creates temporary linux VM
   analyze:
     name: Analyze Python Code
     runs-on: ubuntu-latest
-
+   #Giving permissions for scan
     permissions:
+      #means cannot modify the workflow defined here by itself
       actions: read
+      #can only read the repo files/not modify them
       contents: read
+      #allows to log the outcomes after scan
       security-events: write
-
+    
     strategy:
+      #means if a task fails scan(vulnerability found) don't stop/crash but check others
       fail-fast: false
       matrix:
+        #scan the python code only
         language:
           - python
-
     steps:
+      #adds repo files to the VM
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      #installs the COdeql engine in the VM,python security queries like sqlmap
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
+          #helps in checking each language if multiple in codebase here only python
           languages: ${{ matrix.language }}
 
+      #basically compiles the language(code) and prepares for the codeql scan
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
 
+      #useing the codeql to scan the code for vulnerabilities
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

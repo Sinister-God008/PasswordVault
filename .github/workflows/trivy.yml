@@ -1,49 +1,66 @@
+#this is the name of the scan that will be shown on the actions page
 name: Trivy Security Scan
 
+#this tells when will the action/scan will be performed bascially what are the triggers
 on:
+  #means when the user is pushing anything to main branch
   push:
     branches:
       - main
-      - dev
-
+#when there is a pull/merge request to main branch
   pull_request:
     branches:
       - main
 
+#what all tasks are to be performed in the actions
 jobs:
 
+  #means scan the repo files for any issues like vulnerability in files/pckgs
   filesystem-scan:
+    #name of the task on visible in log
     name: Dependency & Misconfiguration Scan
+    #makes a lightweight vm(temporary) with latest ubuntu in github
     runs-on: ubuntu-latest
 
     steps:
+      #adds the repo files to the VM
       - name: Checkout Repository
         uses: actions/checkout@v4
-
+      #installs the trivy lib on the VM
       - name: Trivy Filesystem Scan
         uses: aquasecurity/trivy-action@master
         with:
+          #scans the repo files
           scan-type: fs
+          #tells scan the current dir(root dir) files
           scan-ref: .
+          #simply outputs or present the results in the form of table
           format: table
+          #show only high/critical issues and ignore light/minor issues(mostly noise)
           severity: HIGH,CRITICAL
 
+  #This scans the repo files code for any leaked secrets like session-keys/user-passwds
   secret-scan:
+    #name that appears on the job(in log)
     name: Secret Scan
     runs-on: ubuntu-latest
 
     steps:
+      #adds the repo files to the VM
       - name: Checkout Repository
         uses: actions/checkout@v4
-
+      #runs the trivy secret scan
       - name: Trivy Secret Scan
         uses: aquasecurity/trivy-action@master
         with:
+          #scan repo files
           scan-type: fs
           scan-ref: .
+          #this means that scan the secrets and not vulnerability scan we did in prev scan
           scanners: secret
           format: table
 
+  #This job is concerned with scanning the docker image we create using Dockerfile
   docker-image-scan:
     name: Docker Image Scan
     runs-on: ubuntu-latest
@@ -53,12 +70,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker Image
+      #this is a way to perform bash command here to create a docker img for the repo(in VM)
         run: |
           docker build -t securepass:latest .
-
       - name: Scan Docker Image
         uses: aquasecurity/trivy-action@master
         with:
+          #points to the img that needs to be scanned to trivy
           image-ref: securepass:latest
           format: table
           severity: HIGH,CRITICAL
