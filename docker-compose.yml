@@ -10,17 +10,23 @@ services:
     ports:
       - "5000:5000"
 
-    #This basically creates a path or link bw Flask container and PostgreSQL container and tells to access the db-container via port 5432 of it
+    
     environment:
       SESSION_SECRET: ${SESSION_SECRET}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      #This basically creates a path or link bw Flask container and PostgreSQL container and tells to access the db-container via port 5432 of it
+      #DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      
+      #This is the modification I had to make to deploy my website on the web using Neon and Render to have a working link
+      DATABASE_URL: postgresql://neondb_owner:npg_T5JGuLstV0UO@ep-crimson-art-ao24zrq3.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
 
     #means start the db container before the web until it is up and running/healthy keep web container waiting
     depends_on:
       db:
         condition: service_healthy
 
-  #This is the PostgreSQL container
+  #This is the PostgreSQL container which is designed to have multiple containers for the application
+  #here its use was to have a postgresql container completely run on docker itself with a volume which can be
+  #implemented on a online cloud service like AWS,Azure,etc,. but not on Render or other free platforms
   db:
     image: postgres:17
 
