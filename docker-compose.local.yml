@@ -1,4 +1,4 @@
-#In this yaml file I have created 2 containers named web and db which are used to build Flask container and PostgreSQL containers resp
+#In this yaml file I have created 2 containers named web and db which are used to build Flask container and PostgreSQL containers locally 
 services:
 
   #This is the FLASK container
@@ -14,11 +14,7 @@ services:
     environment:
       SESSION_SECRET: ${SESSION_SECRET}
       #This basically creates a path or link bw Flask container and PostgreSQL container and tells to access the db-container via port 5432 of it
-      #DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      
-      #This is the modification I had to make to deploy my website on the web using Neon and Render to have a working link
-      DATABASE_URL: postgresql://neondb_owner:npg_T5JGuLstV0UO@ep-crimson-art-ao24zrq3.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
-
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     #means start the db container before the web until it is up and running/healthy keep web container waiting
     depends_on:
       db:
@@ -32,7 +28,7 @@ services:
 
     #This checks if the container is ready interms of database of securepass created for user securepass_user
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U securepass_user -d securepass"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -52,7 +48,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       #Basically we are running the first set of queries that is to create different tables from 
       #init.sql once the container is up and running
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 #Creating the volume by the name of postgres_data which is stored in the container at the location
 #as mentioned in the volumes
 volumes:

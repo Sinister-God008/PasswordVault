@@ -1,0 +1,17 @@
+#This file is created for production deployment where i create only web container for the app
+#as the postgresql db is running on neon so i use the URL given by neon for production and no postgresuser,etc,.
+services:
+
+  web:
+    build: .
+    container_name: securepass-web
+
+    ports:
+      - "5000:5000"
+
+    restart: unless-stopped
+
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      ENCRYPTION_MASTER_KEY: ${ENCRYPTION_MASTER_KEY}

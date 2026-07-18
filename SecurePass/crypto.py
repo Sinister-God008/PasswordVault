@@ -2,37 +2,29 @@
 import os
 import re
 import hashlib
-import secrets
-import base64
 import requests
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.fernet import Fernet
 
+#helps generate the encryption_master_key
+print(Fernet.generate_key().decode())
 
+#getting the environment master key from the environment variables/.env file
 def _get_key() -> bytes:
-    master = os.environ.get("ENCRYPTION_MASTER_KEY", "default-dev-key")
-    return hashlib.sha256(master.encode()).digest()
+    master = os.environ.get("ENCRYPTION_MASTER_KEY")
+    if master is None:
+        raise RuntimeError("ENCRYPTION_MASTER_KEY must be set")
+    return master.encode()
 
-
+#encrypts the password and secrets of user using fernet object and cryptography lib
 def encrypt(plaintext: str) -> str:
-    key = _get_key()
-    iv = secrets.token_bytes(12)
-    aesgcm = AESGCM(key)
-    ct_with_tag = aesgcm.encrypt(iv, plaintext.encode("utf-8"), None)
-    ct = ct_with_tag[:-16]
-    tag = ct_with_tag[-16:]
-    combined = iv + tag + ct
-    return base64.b64encode(combined).decode("utf-8")
+    #creating a fernet object for the generated key
+    f = Fernet(_get_key())
+    return f.encrypt(plaintext.encode()).decode()
 
-
-def decrypt(encoded: str) -> str:
-    key = _get_key()
-    data = base64.b64decode(encoded)
-    iv = data[:12]
-    tag = data[12:28]
-    ct = data[28:]
-    aesgcm = AESGCM(key)
-    plaintext = aesgcm.decrypt(iv, ct + tag, None)
-    return plaintext.decode("utf-8")
+#decrypts the passwords and secrets of the user using fernet object and cryptography lib
+def decrypt(token: str) -> str:
+    f = Fernet(_get_key())
+    return f.decrypt(token.encode()).decode()
 
 
 def password_strength(password: str) -> int:
@@ -82,7 +74,7 @@ def strength_label(score: int) -> str:
 
 
 def check_hibp_password(password: str) -> int:
-    #converting the passwd to byte code and then to sha1 hashcode
+    #converting the passwd to byte code and then to sha1 hashcode as HIBP uses it
     sha1 = hashlib.sha1(password.encode()).hexdigest().upper()
     #splitting the hashcode to prefix and suffix
     prefix, suffix = sha1[:5], sha1[5:]
